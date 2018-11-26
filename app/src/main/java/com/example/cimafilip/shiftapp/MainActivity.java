@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity implements DashboardFragment
         toolbar = getSupportActionBar();
         toolbar.setTitle("Dashboard");
         toolbar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#fe485a")));
-//        toolbar.setDisplayShowHomeEnabled(true);
-//        toolbar.setIcon(R.drawable.ic_person_white_24dp);
 
         loadFragment(new DashboardFragment());
 
