@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">ShiftApp</string>
-    <string name="title_home">Home</string>
+    <string name="app_name">Bottom Navigation</string>
     <string name="title_dashboard">Dashboard</string>
+    <string name="title_my_plan">My plan</string>
+    <string name="title_production_plan">Production plan</string>
+    <string name="title_profile">Profile</string>
     <string name="title_notifications">Notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dashboard_smena">Tvoje další směna</string>
+
 </resources>
