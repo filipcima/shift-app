@@ -1,4 +1,4 @@
-package com.example.cimafilip.shiftapp;
+package com.example.cimafilip.shiftapp.adapters;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.example.cimafilip.shiftapp.R;
 
 public class MyPlanListViewAdapter extends BaseAdapter {
 
@@ -38,7 +40,7 @@ public class MyPlanListViewAdapter extends BaseAdapter {
     };
 
     private String[] places = {
-            "COKAFE Poruba",
+            "COKAFE Centrum",
             "COKAFE Centrum",
             "COKAFE Centrum",
             "COKAFE Centrum"
@@ -57,22 +59,32 @@ public class MyPlanListViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
+        // TODO: implement this method to return ObjectId
         return 0;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.shift_layout, null);
-        TextView dayOfWeek = view.findViewById(R.id.shiftDayOfWeek);
-        TextView date = view.findViewById(R.id.shiftDate);
-        TextView placeName = view.findViewById(R.id.shiftPlaceName);
-        TextView workingTime = view.findViewById(R.id.shiftTime);
-        dayOfWeek.setText(days[position]);
-        date.setText(dates[position]);
-        placeName.setText(places[position]);
-        workingTime.setText(times[position]);
 
+        ViewHolderItem viewHolder = new ViewHolderItem();
 
+        viewHolder.date = view.findViewById(R.id.shiftDate);
+        viewHolder.dayOfWeek = view.findViewById(R.id.shiftDayOfWeek);
+        viewHolder.placeName = view.findViewById(R.id.shiftPlaceName);
+        viewHolder.workingTime = view.findViewById(R.id.shiftTime);
+
+        viewHolder.dayOfWeek.setText(days[position]);
+        viewHolder.date.setText(dates[position]);
+        viewHolder.placeName.setText(places[position]);
+        viewHolder.workingTime.setText(times[position]);
         return view;
+    }
+
+    static class ViewHolderItem {
+        TextView dayOfWeek;
+        TextView date;
+        TextView placeName;
+        TextView workingTime;
     }
 }

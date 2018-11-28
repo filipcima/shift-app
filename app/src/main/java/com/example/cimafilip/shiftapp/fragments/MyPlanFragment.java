@@ -1,4 +1,4 @@
-package com.example.cimafilip.shiftapp;
+package com.example.cimafilip.shiftapp.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,17 +7,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import com.example.cimafilip.shiftapp.R;
+import com.example.cimafilip.shiftapp.adapters.MyPlanListViewAdapter;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ProfileFragment.OnFragmentInteractionListener} interface
+ * {@link MyPlanFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
+ * Use the {@link MyPlanFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment {
+public class MyPlanFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,9 +31,11 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private ListView mListView;
+
     private OnFragmentInteractionListener mListener;
 
-    public ProfileFragment() {
+    public MyPlanFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +45,11 @@ public class ProfileFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
+     * @return A new instance of fragment MyPlanFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
+    public static MyPlanFragment newInstance(String param1, String param2) {
+        MyPlanFragment fragment = new MyPlanFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -58,13 +64,19 @@ public class ProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_my_plan, container, false);
+        ListView mListView = rootView.findViewById(R.id.listViewMyPlan);
+        if (mListView != null) {
+            mListView.setAdapter(new MyPlanListViewAdapter(inflater));
+        }
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -1,4 +1,4 @@
-package com.example.cimafilip.shiftapp;
+package com.example.cimafilip.shiftapp.activities;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +11,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import com.example.cimafilip.shiftapp.R;
+import com.example.cimafilip.shiftapp.fragments.DashboardFragment;
+import com.example.cimafilip.shiftapp.fragments.MyPlanFragment;
+import com.example.cimafilip.shiftapp.fragments.NotificationsFragment;
+import com.example.cimafilip.shiftapp.fragments.ProductionPlanFragment;
+import com.example.cimafilip.shiftapp.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity implements DashboardFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, ProductionPlanFragment.OnFragmentInteractionListener, MyPlanFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener {
 
