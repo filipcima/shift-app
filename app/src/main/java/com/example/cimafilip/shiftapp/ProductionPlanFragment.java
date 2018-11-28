@@ -1,12 +1,26 @@
 package com.example.cimafilip.shiftapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CalendarView;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import sun.bob.mcalendarview.MCalendarView;
+import sun.bob.mcalendarview.listeners.OnDateClickListener;
+import sun.bob.mcalendarview.vo.DateData;
 
 
 /**
@@ -63,8 +77,28 @@ public class ProductionPlanFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_production_plan, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_production_plan, container, false);
+        MCalendarView mCalendarView = (MCalendarView) rootView.findViewById(R.id.calendar);
+
+        mCalendarView.setOnDateClickListener(new OnDateClickListener() {
+            @Override
+            public void onDateClick(View view, DateData date) {
+                Intent intent = new Intent(getContext(), DetailDayActivity.class);
+
+                intent.putExtra("day", date.getDay());
+                intent.putExtra("month", date.getMonth());
+                intent.putExtra("year", date.getYear());
+                if (date.getMonth() != 0) {
+                    startActivity(intent);
+                }
+            }
+        });
+
+        for (DateData date: getShiftDays()) {
+            mCalendarView.markDate(date);
+        }
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -101,6 +135,18 @@ public class ProductionPlanFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
+    private ArrayList<DateData> getShiftDays() {
+        ArrayList<DateData> dates = new ArrayList<>();
+        dates.add(new DateData(2018,11,20));
+        dates.add(new DateData(2018,11,27));
+        dates.add(new DateData(2018,11,1));
+        dates.add(new DateData(2018,11,3));
+        dates.add(new DateData(2018,11,4));
+
+        return dates;
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
