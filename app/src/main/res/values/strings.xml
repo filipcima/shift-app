@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bottom Navigation</string>
+    <string name="app_name">ShiftApp</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_my_plan">My plan</string>
     <string name="title_production_plan">Production plan</string>
@@ -9,5 +9,19 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="dashboard_smena">Tvoje další směna</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Heslo</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">Tento email neznáme</string>
+    <string name="error_invalid_password">Heslo je příliš krátké</string>
+    <string name="error_incorrect_password">Heslo je nesprávné</string>
+    <string name="error_field_required">Tohle pole je potřeba vyplnit.</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 
 </resources>

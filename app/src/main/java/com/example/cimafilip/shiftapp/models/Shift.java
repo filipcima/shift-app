@@ -1,95 +1,35 @@
 package com.example.cimafilip.shiftapp.models;
 
-import org.bson.types.ObjectId;
+import com.google.gson.annotations.SerializedName;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Shift {
-    private ObjectId objectId;
-    private ObjectId superiorPlanId;
-    private ObjectId userPlanId;
-    private ObjectId userId;
-    private ArrayList<ObjectId> workersIds;
+    @SerializedName("_id")
+    private String _id;
 
-    private SuperiorPlan superiorPlan;
-    private UserPlan userPlan;
-    private User user;
+    @SerializedName("number_of_workers")
+    private int workersCount;
+
+    @SerializedName("workers")
     private ArrayList<User> workers;
 
-    public Shift(ObjectId objectId, ObjectId superiorPlanId, ObjectId userPlanId, ObjectId userId, ArrayList<ObjectId> workersIds) {
-        this.objectId = objectId;
-        this.superiorPlanId = superiorPlanId;
-        this.userPlanId = userPlanId;
-        this.userId = userId;
-        this.workersIds = workersIds;
+    @SerializedName("superior_plan")
+    private String superiorPlan;
+
+    @SerializedName("date_from")
+    private String dateFrom;
+
+    @SerializedName("date_to")
+    private String dateTo;
+
+    public String get_id() {
+        return _id;
     }
 
-    public Shift(ObjectId objectId) {
-
-    }
-
-    public ObjectId getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
-    }
-
-    public ObjectId getSuperiorPlanId() {
-        return superiorPlanId;
-    }
-
-    public void setSuperiorPlanId(ObjectId superiorPlanId) {
-        this.superiorPlanId = superiorPlanId;
-    }
-
-    public ObjectId getUserPlanId() {
-        return userPlanId;
-    }
-
-    public void setUserPlanId(ObjectId userPlanId) {
-        this.userPlanId = userPlanId;
-    }
-
-    public ObjectId getUserId() {
-        return userId;
-    }
-
-    public void setUserId(ObjectId userId) {
-        this.userId = userId;
-    }
-
-    public ArrayList<ObjectId> getWorkersIds() {
-        return workersIds;
-    }
-
-    public void setWorkersIds(ArrayList<ObjectId> workersIds) {
-        this.workersIds = workersIds;
-    }
-
-    public SuperiorPlan getSuperiorPlan() {
-        return superiorPlan;
-    }
-
-    public void setSuperiorPlan(SuperiorPlan superiorPlan) {
-        this.superiorPlan = superiorPlan;
-    }
-
-    public UserPlan getUserPlan() {
-        return userPlan;
-    }
-
-    public void setUserPlan(UserPlan userPlan) {
-        this.userPlan = userPlan;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public ArrayList<User> getWorkers() {
@@ -98,5 +38,37 @@ public class Shift {
 
     public void setWorkers(ArrayList<User> workers) {
         this.workers = workers;
+    }
+
+    public int getWorkersCount() {
+        return workersCount;
+    }
+
+    public void setWorkersCount(int workersCount) {
+        this.workersCount = workersCount;
+    }
+
+    public String getDateFrom() {
+        return dateFrom;
+    }
+
+    public void setDateFrom(String dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public String getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(String dateTo) {
+        this.dateTo = dateTo;
+    }
+
+    public String getSuperiorPlan() {
+        return superiorPlan;
+    }
+
+    public void setSuperiorPlan(String superiorPlan) {
+        this.superiorPlan = superiorPlan;
     }
 }

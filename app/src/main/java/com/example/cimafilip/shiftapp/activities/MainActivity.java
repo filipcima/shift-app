@@ -1,9 +1,11 @@
 package com.example.cimafilip.shiftapp.activities;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.cimafilip.shiftapp.R;
 import com.example.cimafilip.shiftapp.fragments.DashboardFragment;
@@ -28,6 +31,11 @@ public class MainActivity extends AppCompatActivity implements DashboardFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String nameUser = prefs.getString("nameUser", "");
+
+        Toast.makeText(this, "Hello " + nameUser, Toast.LENGTH_LONG).show();
+
         toolbar = getSupportActionBar();
         toolbar.setTitle("Dashboard");
         toolbar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#fe485a")));
@@ -37,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements DashboardFragment
         BottomNavigationView menu = findViewById(R.id.navigation);
         menu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -83,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements DashboardFragment
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri){

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.cimafilip.shiftapp"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -31,5 +31,6 @@ dependencies {
     implementation 'sun.bob:mcalendarview:1.0.0'
     implementation 'org.mongodb:mongodb-driver-sync:3.9.1'
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
-
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 }

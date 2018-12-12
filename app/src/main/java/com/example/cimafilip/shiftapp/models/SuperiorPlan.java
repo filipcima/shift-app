@@ -1,47 +1,36 @@
 package com.example.cimafilip.shiftapp.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.bson.types.ObjectId;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
-class SuperiorPlan {
-    private ObjectId objectId;
-    private ObjectId ownerId;
+public class SuperiorPlan implements Serializable {
+    @SerializedName("_id")
+    private String _id;
+
+    @SerializedName("owner")
     private User owner;
+
+    @SerializedName("status")
     private String status;
-    private LocalDateTime published;
-    private ArrayList<Shift> shifts;
-    private ArrayList<LocalDateTime> plannedShifts;
 
+    @SerializedName("_created")
+    private String created;
 
-    SuperiorPlan(ObjectId ownerId, User owner, String status, LocalDateTime published, ArrayList<Shift> shifts, ArrayList<LocalDateTime> plannedShifts) {
-        this.ownerId = ownerId;
-        this.owner = owner;
-        this.status = status;
-        this.published = published;
-        this.shifts = shifts;
-        this.plannedShifts = plannedShifts;
+    @SerializedName("shifts")
+    private List<Shift> shifts;
+
+    public String get_id() {
+        return _id;
     }
 
-    SuperiorPlan(ObjectId objectId) {
-        this.objectId = objectId;
-    }
-
-    public ObjectId getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
-    }
-
-    public ObjectId getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(ObjectId ownerId) {
-        this.ownerId = ownerId;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public User getOwner() {
@@ -60,27 +49,19 @@ class SuperiorPlan {
         this.status = status;
     }
 
-    public LocalDateTime getPublished() {
-        return published;
-    }
-
-    public void setPublished(LocalDateTime published) {
-        this.published = published;
-    }
-
-    public ArrayList<Shift> getShifts() {
+    public List<Shift> getShifts() {
         return shifts;
     }
 
-    public void setShifts(ArrayList<Shift> shifts) {
+    public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
     }
 
-    public ArrayList<LocalDateTime> getPlannedShifts() {
-        return plannedShifts;
+    public String getCreated() {
+        return created;
     }
 
-    public void setPlannedShifts(ArrayList<LocalDateTime> plannedShifts) {
-        this.plannedShifts = plannedShifts;
+    public void setCreated(String created) {
+        this.created = created;
     }
 }

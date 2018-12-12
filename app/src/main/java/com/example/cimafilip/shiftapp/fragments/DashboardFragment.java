@@ -1,14 +1,44 @@
 package com.example.cimafilip.shiftapp.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.cimafilip.shiftapp.R;
+import com.example.cimafilip.shiftapp.activities.MainActivity;
+import com.example.cimafilip.shiftapp.activities.SetShiftsActivity;
+import com.example.cimafilip.shiftapp.adapters.MyPlanListViewAdapter;
+import com.example.cimafilip.shiftapp.adapters.NotificationsListViewAdapter;
+import com.example.cimafilip.shiftapp.api.APIClient;
+import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
+import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
+import com.example.cimafilip.shiftapp.models.NotificationList;
+import com.example.cimafilip.shiftapp.models.Shift;
+import com.example.cimafilip.shiftapp.models.ShiftList;
+import com.example.cimafilip.shiftapp.models.SuperiorPlan;
+import com.example.cimafilip.shiftapp.models.SuperiorPlanList;
+import com.example.cimafilip.shiftapp.models.SuperiorPlanList;
+import com.example.cimafilip.shiftapp.models.User;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -28,6 +58,11 @@ public class DashboardFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TextView mWelcomeTextView;
+    private TextView mReminderTextView;
+    private Button mShowShiftsButton;
+    private String idUser;
+    private SharedPreferences prefs;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,8 +100,143 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String nameUser = prefs.getString("nameUser", "");
+
+        mWelcomeTextView = rootView.findViewById(R.id.welcomeTextView);
+        mWelcomeTextView.setText("Vítej, " + nameUser);
+
+        mReminderTextView = rootView.findViewById(R.id.reminderTextView);
+        mReminderTextView.setVisibility(View.INVISIBLE);
+
+        mShowShiftsButton = rootView.findViewById(R.id.setShiftsButton);
+        mShowShiftsButton.setVisibility(View.INVISIBLE);
+        mShowShiftsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SetShiftsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        idUser = prefs.getString("idUser", "");
+        getNextShift();
+        getPendingSuperiorPlan();
+
+        return rootView;
+    }
+
+    private void getPendingSuperiorPlan() {
+         String query = new RetrofitURLBuilder("query")
+                 .add("status", "pending")
+                 .build();
+         String embedded = new RetrofitURLBuilder("embedded")
+                 .add("owner", "1")
+                 .build();
+         String limit = new RetrofitURLBuilder("limit")
+                 .add("1")
+                 .build();
+         String order = new RetrofitURLBuilder("sort")
+                 .add("_created", "-1")
+                 .build();
+
+        IAPIEndpoints apiService = APIClient.getApiService();
+        Call<SuperiorPlanList> call = apiService.getSuperiorPlans(query, limit, order, embedded);
+        call.enqueue(new Callback<SuperiorPlanList>() {
+            @Override
+            public void onResponse(Call<SuperiorPlanList> call, Response<SuperiorPlanList> response) {
+                Log.d("good", call.request().url().toString());
+                SuperiorPlanList superiorPlans = response.body();
+
+                if (superiorPlans.getSuperiorPlans().size() > 0) {
+                    SuperiorPlan superiorPlan = superiorPlans.getSuperiorPlans().get(0);
+                    if (superiorPlan.getStatus().equals("pending")) {
+                        prefs.edit()
+                                .putString("pendingPlanId", superiorPlan.get_id())
+                                .apply();
+                        mShowShiftsButton.setVisibility(View.VISIBLE);
+                        mReminderTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        mShowShiftsButton.setVisibility(View.INVISIBLE);
+                        mReminderTextView.setVisibility(View.INVISIBLE);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<SuperiorPlanList> call, Throwable t) {
+                Log.d("fail", call.request().url().toString());
+                Log.d("fail", t.getLocalizedMessage());
+
+            }
+        });
+
+    }
+
+    private void getNextShift() {
+        String now = new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(Calendar.getInstance().getTime());
+        Log.d("now", now);
+        String query = "{\"$and\":[{\"workers\":{\"$in\":[\"" + idUser + "\"]}},{\"date_from\":{\"$gt\":\""+ now +"\"}}]}";
+
+        String order = new RetrofitURLBuilder("sort")
+                .add("date_from", "-1")
+                .build();
+
+        String limit = new RetrofitURLBuilder("limit")
+                .add("1")
+                .build();
+
+        String embedded = new RetrofitURLBuilder("embedded")
+                .add("workers", "1")
+                .build();
+
+        IAPIEndpoints apiService = APIClient.getApiService();
+        Call<ShiftList> call = apiService.getNextShift(query, limit, order, embedded);
+        call.enqueue(new Callback<ShiftList>() {
+            @Override
+            public void onResponse(Call<ShiftList> call, Response<ShiftList> response) {
+                Log.d("good", call.request().url().toString());
+                ShiftList list = response.body();
+                if (list != null) {
+                    Shift s = list.getShifts().get(0);
+
+                    String day = s.getDateFrom().split(" ")[0].split("/")[0];
+                    String month = s.getDateFrom().split(" ")[0].split("/")[1];
+                    String startTime = s.getDateFrom().split(" ")[1].substring(0, 5);
+                    String endTime = s.getDateTo().split(" ")[1].substring(0, 5);
+                    StringBuilder workersString = new StringBuilder();
+
+                    int i = 0;
+                    for (User worker: s.getWorkers()) {
+                        String fullName = worker.getFirstName() + " " + worker.getSecondName();
+                        workersString.append(fullName);
+
+                        if (!(i++ == s.getWorkers().size() - 1)) {
+                            workersString.append(", ");
+                        }
+                    }
+
+                    TextView workers = getView().findViewById(R.id.shiftPlaceName2);
+                    TextView date = getView().findViewById(R.id.textView2);
+                    TextView shiftTime = getView().findViewById(R.id.shiftTime2);
+
+
+                    workers.setText(workersString.toString());
+                    date.setText(day + "." + month + ".");
+                    shiftTime.setText(startTime + "-" + endTime);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ShiftList> call, Throwable t) {
+                Log.d("fail", call.request().url().toString());
+
+            }
+        });
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

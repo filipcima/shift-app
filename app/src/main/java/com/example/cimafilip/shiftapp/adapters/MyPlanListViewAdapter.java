@@ -67,7 +67,7 @@ public class MyPlanListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.shift_layout, null);
 
-        ViewHolderItem viewHolder = new ViewHolderItem();
+        ViewHolder viewHolder = new ViewHolder();
 
         viewHolder.date = view.findViewById(R.id.shiftDate);
         viewHolder.dayOfWeek = view.findViewById(R.id.shiftDayOfWeek);
@@ -81,7 +81,7 @@ public class MyPlanListViewAdapter extends BaseAdapter {
         return view;
     }
 
-    static class ViewHolderItem {
+    private static class ViewHolder {
         TextView dayOfWeek;
         TextView date;
         TextView placeName;

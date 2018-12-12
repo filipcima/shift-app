@@ -5,15 +5,28 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.cimafilip.shiftapp.activities.DetailDayActivity;
 import com.example.cimafilip.shiftapp.R;
+import com.example.cimafilip.shiftapp.adapters.NotificationsListViewAdapter;
+import com.example.cimafilip.shiftapp.api.APIClient;
+import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
+import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
+import com.example.cimafilip.shiftapp.models.NotificationList;
+import com.example.cimafilip.shiftapp.models.Shift;
+import com.example.cimafilip.shiftapp.models.ShiftList;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import sun.bob.mcalendarview.MCalendarView;
 import sun.bob.mcalendarview.listeners.OnDateClickListener;
 import sun.bob.mcalendarview.vo.DateData;
@@ -28,6 +41,8 @@ import sun.bob.mcalendarview.vo.DateData;
  * create an instance of this fragment.
  */
 public class ProductionPlanFragment extends Fragment {
+    private MCalendarView mCalendarView;
+    private List<Shift> shifts;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,7 +55,7 @@ public class ProductionPlanFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public ProductionPlanFragment() {
-        // Required empty public constructor
+        getData("5c08246f766cf241597b3326");
     }
 
     /**
@@ -74,7 +89,7 @@ public class ProductionPlanFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_production_plan, container, false);
-        MCalendarView mCalendarView = (MCalendarView) rootView.findViewById(R.id.calendar);
+        mCalendarView = (MCalendarView) rootView.findViewById(R.id.calendar);
 
         mCalendarView.setOnDateClickListener(new OnDateClickListener() {
             @Override
@@ -90,11 +105,54 @@ public class ProductionPlanFragment extends Fragment {
             }
         });
 
-        for (DateData date: getShiftDays()) {
-            mCalendarView.markDate(date);
-        }
-
         return rootView;
+    }
+
+    private void getData(String id) {
+        String query = new RetrofitURLBuilder("query")
+                .add("superior_plan", id)
+                .build();
+        String embedded = new RetrofitURLBuilder("embedded")
+                .add("workers", "1")
+                .build();
+
+        Log.d("embed", embedded);
+
+        IAPIEndpoints apiService = APIClient.getApiService();
+        Call<ShiftList> call = apiService.getShifts(query, embedded);
+        call.enqueue(new Callback<ShiftList>() {
+            @Override
+            public void onResponse(Call<ShiftList> call, Response<ShiftList> response) {
+                Log.d("Onresponse", call.request().url().toString());
+                shifts = response.body().getShifts();
+
+                if (shifts != null) {
+                    for (Shift shift: shifts) {
+                        String datetime = shift.getDateFrom();
+                        String date2 = datetime.split(" ")[0];
+                        String[] dateArray = date2.split("/");
+                        Log.d("shift", dateArray[2]);
+                        Log.d("shift", dateArray[1]);
+                        Log.d("shift", dateArray[0]);
+                        mCalendarView.markDate(
+                                Integer.parseInt("20" + dateArray[2]),
+                                Integer.parseInt(dateArray[1]),
+                                Integer.parseInt(dateArray[0]));
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ShiftList> call, Throwable t) {
+                Log.d("fail", call.request().url().toString());
+                Log.d("msg", t.getLocalizedMessage());
+
+            }
+        });
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

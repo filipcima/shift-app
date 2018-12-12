@@ -1,38 +1,35 @@
 package com.example.cimafilip.shiftapp.models;
 
-import org.bson.types.ObjectId;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.List;
 
-class User {
-    private ObjectId objectId;
+public class User implements Serializable {
+    @SerializedName("_id")
+    private String _id;
+
+    @SerializedName("firstname")
     private String firstName;
+
+    @SerializedName("lastname")
     private String secondName;
+
+    @SerializedName("mail")
     private String email;
+
+    @SerializedName("password_hash")
     private String passwordHash;
+
+    @SerializedName("role")
     private String role;
-    private ArrayList<User> inferiors;
 
-    User(ObjectId objectId, String firstName, String secondName, String email, String passwordHash, String role, ArrayList<User> inferiors) {
-        this.objectId = objectId;
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
-        this.inferiors = inferiors;
+    public String get_id() {
+        return _id;
     }
 
-    User(ObjectId objectId) {
-        this.objectId = objectId;
-    }
-
-    public ObjectId getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getFirstName() {
@@ -73,13 +70,5 @@ class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public ArrayList<User> getInferiors() {
-        return inferiors;
-    }
-
-    public void setInferiors(ArrayList<User> inferiors) {
-        this.inferiors = inferiors;
     }
 }

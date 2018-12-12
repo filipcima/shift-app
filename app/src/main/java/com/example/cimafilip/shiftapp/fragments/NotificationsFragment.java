@@ -1,14 +1,31 @@
 package com.example.cimafilip.shiftapp.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.cimafilip.shiftapp.R;
+import com.example.cimafilip.shiftapp.adapters.MyPlanListViewAdapter;
+import com.example.cimafilip.shiftapp.adapters.NotificationsListViewAdapter;
+import com.example.cimafilip.shiftapp.api.APIClient;
+import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
+import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
+import com.example.cimafilip.shiftapp.models.Notification;
+import com.example.cimafilip.shiftapp.models.NotificationList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 /**
@@ -28,7 +45,9 @@ public class NotificationsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private NotificationList notificationList;
 
+    private ProgressDialog progressDialog;
     private OnFragmentInteractionListener mListener;
 
     public NotificationsFragment() {
@@ -60,20 +79,59 @@ public class NotificationsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading....");
+        progressDialog.show();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_notifications, container, false);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String idUser = prefs.getString("idUser", "");
+        getData(idUser);
+
+        return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void getData(String id) {
+        IAPIEndpoints apiService = APIClient.getApiService();
+
+        String query = new RetrofitURLBuilder("query")
+                .add("user", id)
+                .build();
+        String embed = new RetrofitURLBuilder("embedded")
+                .add("user", "1")
+                .build();
+        String sort = new RetrofitURLBuilder("sort")
+                .add("_created", "-1")
+                .build();
+        String limit = new RetrofitURLBuilder("limit")
+                .add("1")
+                .build();
+
+        Log.d("limit", limit);
+        Call<NotificationList> call = apiService.getNotifications(query, sort, embed);
+        call.enqueue(new Callback<NotificationList>() {
+            @Override
+            public void onResponse(Call<NotificationList> call, Response<NotificationList> response) {
+                notificationList = response.body();
+                ListView mListView = getView().findViewById(R.id.notificationsListView);
+                if (mListView != null) {
+                    mListView.setAdapter(new NotificationsListViewAdapter(getLayoutInflater(), notificationList));
+                }
+                progressDialog.dismiss();
+
+            }
+
+            @Override
+            public void onFailure(Call<NotificationList> call, Throwable t) {
+                Log.d("url", call.request().url().toString());
+            }
+
+        });
     }
 
     @Override
