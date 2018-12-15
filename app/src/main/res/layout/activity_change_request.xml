@@ -19,8 +19,8 @@
 
     <TextView
         android:id="@+id/changeRequestPromptText"
-        android:layout_width="195dp"
-        android:layout_height="23dp"
+        android:layout_width="322dp"
+        android:layout_height="21dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Požádat o výměnu následující spolupracovníky:"

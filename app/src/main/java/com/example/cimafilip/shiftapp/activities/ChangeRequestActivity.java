@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.cimafilip.shiftapp.R;
 import com.example.cimafilip.shiftapp.adapters.WorkersListViewAdapter;
@@ -22,6 +24,8 @@ import retrofit2.Response;
 
 public class ChangeRequestActivity extends AppCompatActivity {
     private ListView mWorkersListView;
+    private Button mButton;
+    private TextView mPromptTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +33,15 @@ public class ChangeRequestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_request);
 
         mWorkersListView = findViewById(R.id.workersListView);
+        mPromptTextView = findViewById(R.id.changeRequestPromptText);
+        mButton = findViewById(R.id.confirmRequestChangeButton);
 
         Intent i = getIntent();
         final List<String> usersOnShift = i.getStringArrayListExtra("usersOnShift");
+
+
         String usersString = new RetrofitURLBuilder("").itemsToArray(usersOnShift);
-
         String query = "{\"$and\":[{\"_id\":{\"$nin\":" + usersString + "}},{\"role\":\"basic_user\"}]}";
-
         IAPIEndpoints apiClient = APIClient.getApiService();
         Call<UserList> call = apiClient.getUsers(query);
         call.enqueue(new Callback<UserList>() {
@@ -46,6 +52,11 @@ public class ChangeRequestActivity extends AppCompatActivity {
 
                 if (mWorkersListView != null) {
                     mWorkersListView.setAdapter(new WorkersListViewAdapter(getLayoutInflater(), usersNotOnShift));
+                }
+
+                if (usersNotOnShift.size() == 0) {
+                    mButton.setEnabled(false);
+                    mPromptTextView.setText("Bohuzel neni nikdo, kdo by te nahradil.");
                 }
             }
 

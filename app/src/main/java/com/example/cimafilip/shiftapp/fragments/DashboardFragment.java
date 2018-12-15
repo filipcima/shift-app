@@ -182,7 +182,7 @@ public class DashboardFragment extends Fragment {
         String query = "{\"$and\":[{\"workers\":{\"$in\":[\"" + idUser + "\"]}},{\"date_from\":{\"$gt\":\""+ now +"\"}}]}";
 
         String order = new RetrofitURLBuilder("sort")
-                .add("date_from", "-1")
+                .add("date_from", "1")
                 .build();
 
         String limit = new RetrofitURLBuilder("limit")

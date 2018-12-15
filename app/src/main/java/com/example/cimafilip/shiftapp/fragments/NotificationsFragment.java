@@ -98,25 +98,25 @@ public class NotificationsFragment extends Fragment {
 
     private void getData(String id) {
         IAPIEndpoints apiService = APIClient.getApiService();
-
-        String query = new RetrofitURLBuilder("query")
-                .add("user", id)
-                .build();
+        String query = "{\"for_users\":{\"$in\": [\""+ id +"\"]}}";
         String embed = new RetrofitURLBuilder("embedded")
-                .add("user", "1")
+                .add("from_user", "1")
+                .add("for_users", "1")
+                .add("shift", "1")
+                .add("shift.workers", "1")
                 .build();
+
+        Log.d("embedded", embed);
         String sort = new RetrofitURLBuilder("sort")
                 .add("_created", "-1")
                 .build();
-        String limit = new RetrofitURLBuilder("limit")
-                .add("1")
-                .build();
 
-        Log.d("limit", limit);
         Call<NotificationList> call = apiService.getNotifications(query, sort, embed);
         call.enqueue(new Callback<NotificationList>() {
             @Override
             public void onResponse(Call<NotificationList> call, Response<NotificationList> response) {
+                Log.d("notifications ok", call.request().url().toString());
+
                 notificationList = response.body();
                 ListView mListView = getView().findViewById(R.id.notificationsListView);
                 if (mListView != null) {
@@ -129,6 +129,7 @@ public class NotificationsFragment extends Fragment {
             @Override
             public void onFailure(Call<NotificationList> call, Throwable t) {
                 Log.d("url", call.request().url().toString());
+                Log.d("stackTrace", t.getLocalizedMessage());
             }
 
         });

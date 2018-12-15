@@ -5,7 +5,9 @@ import com.example.cimafilip.shiftapp.models.*;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -46,6 +48,13 @@ public interface IAPIEndpoints {
                                  @Query("embedded") String embedded);
 
     @PATCH("shifts/{id}")
-    Call<Shift> patchShift(@Path("id") String id);
+    Call<ShiftHelper> patchShift(@Path("id") String id,
+                           @Body ShiftHelper shift,
+                           @Header("If-Match") String etag);
+
+    @PATCH("notifications/{id}")
+    Call<NotificationHelper> patchNotification(@Path("id") String id,
+                                               @Body NotificationHelper notification,
+                                               @Header("If-Match") String etag);
 
 }

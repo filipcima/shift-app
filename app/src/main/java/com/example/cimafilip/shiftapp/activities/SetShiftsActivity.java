@@ -5,6 +5,7 @@ import com.example.cimafilip.shiftapp.api.APIClient;
 import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
 import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
 import com.example.cimafilip.shiftapp.models.Shift;
+import com.example.cimafilip.shiftapp.models.ShiftHelper;
 import com.example.cimafilip.shiftapp.models.ShiftList;
 import com.example.cimafilip.shiftapp.models.User;
 
@@ -18,7 +19,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -41,7 +44,7 @@ public class SetShiftsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Navol, kdy můžeš pracovat.");
         mListView = findViewById(R.id.setShiftsListView);
         mFloatingButton = findViewById(R.id.floatingActionButton);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         idUser = prefs.getString("idUser", "");
 
         getData();
@@ -73,8 +76,37 @@ public class SetShiftsActivity extends AppCompatActivity {
                     if ((!userOnShift && canGoSwitch.isChecked()) || (userOnShift && !canGoSwitch.isChecked())) {
                         if (userOnShift && !canGoSwitch.isChecked()) {
                             shift.getWorkers().remove(index);
+                        } else if (!userOnShift && canGoSwitch.isChecked()) {
+                            User userWithId = new User();
+                            userWithId.set_id(idUser);
+                            shift.getWorkers().add(userWithId);
                         }
                     }
+
+
+                    List<String> workerIds = new ArrayList<>();
+                    for(User worker : shift.getWorkers()) {
+                        workerIds.add(worker.get_id());
+                    }
+
+                    ShiftHelper shiftHelper = new ShiftHelper();
+                    shiftHelper.setWorkers((ArrayList<String>) workerIds);
+                    IAPIEndpoints apiService = APIClient.getApiService();
+                    Call<ShiftHelper> call = apiService.patchShift(shift.get_id(), shiftHelper, shift.get_etag());
+                    call.enqueue(new Callback<ShiftHelper>() {
+                        @Override
+                        public void onResponse(Call<ShiftHelper> call, Response<ShiftHelper> response) {
+                            Log.d("good", call.request().url().toString());
+                            Toast.makeText(getApplicationContext(), "Shifts saved.", Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<ShiftHelper> call, Throwable t) {
+                            Log.d("fail", call.request().url().toString());
+                            Log.d("fail", t.getLocalizedMessage());
+                            Toast.makeText(getApplicationContext(), "Error occured during saving shifts.", Toast.LENGTH_LONG).show();
+                        }
+                    });
 
                     Log.d("shift detail", String.valueOf(shiftDetailTextView.getText()));
                     Log.d("shift detail", String.valueOf(canGoSwitch.isChecked()));

@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Shift {
+    @SerializedName("_etag")
+    private String _etag;
+
     @SerializedName("_id")
     private String _id;
 
@@ -70,5 +73,13 @@ public class Shift {
 
     public void setSuperiorPlan(String superiorPlan) {
         this.superiorPlan = superiorPlan;
+    }
+
+    public String get_etag() {
+        return _etag;
+    }
+
+    public void set_etag(String _etag) {
+        this._etag = _etag;
     }
 }

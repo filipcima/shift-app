@@ -34,7 +34,7 @@ public class RetrofitURLBuilder {
             sb.append("\"");
             sb.append(items.get(i));
             sb.append("\"");
-            if(!(i++ == items.size() - 1)){
+            if(!(i + 1 == items.size())){
                 sb.append(',');
             }
         }
