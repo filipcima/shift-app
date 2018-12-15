@@ -95,7 +95,7 @@ public class SetShiftsListViewAdapter extends BaseAdapter {
 
         // extract date
         String[] datetimeFrom = shift.getDateFrom().split(" ");
-        String[] datetimeTo = shift.getDateFrom().split(" ");
+        String[] datetimeTo = shift.getDateTo().split(" ");
         String date = datetimeFrom[0];
         String from = datetimeFrom[1].substring(0, 5);
         String to = datetimeTo[1].substring(0, 5);

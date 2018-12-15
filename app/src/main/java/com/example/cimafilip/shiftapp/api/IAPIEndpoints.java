@@ -15,6 +15,9 @@ public interface IAPIEndpoints {
     @GET("people/{surname}")
     Call<User> getUser(@Path("surname") String surname);
 
+    @GET("people")
+    Call<UserList> getUsers(@Query("where") String query);
+
     @GET("notifications")
     Call<NotificationList> getNotifications(@Query("where") String query,
                                             @Query("sort") String sort,

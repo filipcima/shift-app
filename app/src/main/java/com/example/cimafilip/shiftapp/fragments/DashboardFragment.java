@@ -178,7 +178,7 @@ public class DashboardFragment extends Fragment {
 
     private void getNextShift() {
         String now = new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(Calendar.getInstance().getTime());
-        Log.d("now", now);
+
         String query = "{\"$and\":[{\"workers\":{\"$in\":[\"" + idUser + "\"]}},{\"date_from\":{\"$gt\":\""+ now +"\"}}]}";
 
         String order = new RetrofitURLBuilder("sort")
@@ -201,32 +201,39 @@ public class DashboardFragment extends Fragment {
                 Log.d("good", call.request().url().toString());
                 ShiftList list = response.body();
                 if (list != null) {
-                    Shift s = list.getShifts().get(0);
-
-                    String day = s.getDateFrom().split(" ")[0].split("/")[0];
-                    String month = s.getDateFrom().split(" ")[0].split("/")[1];
-                    String startTime = s.getDateFrom().split(" ")[1].substring(0, 5);
-                    String endTime = s.getDateTo().split(" ")[1].substring(0, 5);
-                    StringBuilder workersString = new StringBuilder();
-
-                    int i = 0;
-                    for (User worker: s.getWorkers()) {
-                        String fullName = worker.getFirstName() + " " + worker.getSecondName();
-                        workersString.append(fullName);
-
-                        if (!(i++ == s.getWorkers().size() - 1)) {
-                            workersString.append(", ");
-                        }
-                    }
-
                     TextView workers = getView().findViewById(R.id.shiftPlaceName2);
                     TextView date = getView().findViewById(R.id.textView2);
                     TextView shiftTime = getView().findViewById(R.id.shiftTime2);
+                    TextView dayText = getView().findViewById(R.id.dayText2);
 
+                    if (list.getShifts().size() > 0) {
+                        Shift s = list.getShifts().get(0);
 
-                    workers.setText(workersString.toString());
-                    date.setText(day + "." + month + ".");
-                    shiftTime.setText(startTime + "-" + endTime);
+                        String day = s.getDateFrom().split(" ")[0].split("/")[0];
+                        String month = s.getDateFrom().split(" ")[0].split("/")[1];
+                        String startTime = s.getDateFrom().split(" ")[1].substring(0, 5);
+                        String endTime = s.getDateTo().split(" ")[1].substring(0, 5);
+                        StringBuilder workersString = new StringBuilder();
+
+                        int i = 0;
+                        for (User worker : s.getWorkers()) {
+                            String fullName = worker.getFirstName() + " " + worker.getSecondName();
+                            workersString.append(fullName);
+
+                            if (!(i++ == s.getWorkers().size() - 1)) {
+                                workersString.append(", ");
+                            }
+                        }
+
+                        workers.setText(workersString.toString());
+                        date.setText(day + "." + month + ".");
+                        shiftTime.setText(startTime + "-" + endTime);
+                    } else {
+                        workers.setText("");
+                        date.setText("");
+                        shiftTime.setText("");
+                        dayText.setText("");
+                    }
                 }
             }
 

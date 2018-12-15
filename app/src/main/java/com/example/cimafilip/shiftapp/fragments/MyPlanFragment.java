@@ -1,9 +1,12 @@
 package com.example.cimafilip.shiftapp.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,18 @@ import android.widget.ListView;
 
 import com.example.cimafilip.shiftapp.R;
 import com.example.cimafilip.shiftapp.adapters.MyPlanListViewAdapter;
+import com.example.cimafilip.shiftapp.adapters.ShiftsByDayViewAdapter;
+import com.example.cimafilip.shiftapp.api.APIClient;
+import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
+import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
+import com.example.cimafilip.shiftapp.models.Shift;
+import com.example.cimafilip.shiftapp.models.ShiftList;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -70,11 +85,44 @@ public class MyPlanFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_my_plan, container, false);
-        ListView mListView = rootView.findViewById(R.id.listViewMyPlan);
-        if (mListView != null) {
-            mListView.setAdapter(new MyPlanListViewAdapter(inflater));
-        }
+        final View rootView = inflater.inflate(R.layout.fragment_my_plan, container, false);
+        mListView = rootView.findViewById(R.id.listViewMyPlan);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String idUser = prefs.getString("idUser", "");
+
+        String where = "{\"workers\":{\"$in\": [\"" + idUser + "\"]}}";
+
+        String order = new RetrofitURLBuilder("sort")
+                .add("date_from", "1")
+                .build();
+
+        String embedded = new RetrofitURLBuilder("embedded")
+                .add("workers", "1")
+                .build();
+
+        IAPIEndpoints apiClient = APIClient.getApiService();
+        Call<ShiftList> call = apiClient.getShiftsByPlan(where, order, embedded);
+        call.enqueue(new Callback<ShiftList>() {
+            @Override
+            public void onResponse(Call<ShiftList> call, Response<ShiftList> response) {
+                Log.d("myplanFragment", call.request().url().toString());
+
+                if (response.body() != null) {
+                    List<Shift> sl = response.body().getShifts();
+                    ListView mListView = rootView.findViewById(R.id.listViewMyPlan);
+                    if (mListView != null) {
+                        mListView.setAdapter(new ShiftsByDayViewAdapter(getLayoutInflater(), sl));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ShiftList> call, Throwable t) {
+                Log.d("fail", call.request().url().toString());
+                Log.d("msg", t.getLocalizedMessage());
+            }
+        });
 
         return rootView;
     }

@@ -59,7 +59,6 @@ public class MyPlanListViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        // TODO: implement this method to return ObjectId
         return 0;
     }
 

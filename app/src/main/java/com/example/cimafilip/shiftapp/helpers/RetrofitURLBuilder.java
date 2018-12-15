@@ -1,6 +1,7 @@
 package com.example.cimafilip.shiftapp.helpers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -25,20 +26,37 @@ public class RetrofitURLBuilder {
         return this;
     }
 
+    public String itemsToArray(List<String> items) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+
+        for (int i = 0; i < items.size(); i++) {
+            sb.append("\"");
+            sb.append(items.get(i));
+            sb.append("\"");
+            if(!(i++ == items.size() - 1)){
+                sb.append(',');
+            }
+        }
+        sb.append(']');
+
+        return sb.toString();
+    }
+
     public String build() {
         StringBuilder sb = new StringBuilder();
-        String braces;
+        String brackets;
         if (param.equals("sort")) {
-            braces = "[]";
+            brackets = "[]";
         } else {
-            braces = "{}";
+            brackets = "{}";
         }
 
         if (param.equals("limit")) {
             return String.valueOf(limit);
         }
 
-        sb.append(braces.charAt(0));
+        sb.append(brackets.charAt(0));
         int i = 0;
         for (Map.Entry<String, String> entry: params.entrySet()) {
             String key = entry.getKey();
@@ -59,7 +77,7 @@ public class RetrofitURLBuilder {
                 sb.append(',');
             }
         }
-        sb.append(braces.charAt(1));
+        sb.append(brackets.charAt(1));
 
         return sb.toString();
     }

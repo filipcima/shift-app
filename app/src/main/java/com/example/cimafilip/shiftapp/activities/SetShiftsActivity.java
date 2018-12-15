@@ -76,8 +76,6 @@ public class SetShiftsActivity extends AppCompatActivity {
                         }
                     }
 
-
-
                     Log.d("shift detail", String.valueOf(shiftDetailTextView.getText()));
                     Log.d("shift detail", String.valueOf(canGoSwitch.isChecked()));
                 }

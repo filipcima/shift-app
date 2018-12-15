@@ -1,13 +1,19 @@
 package com.example.cimafilip.shiftapp.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -16,9 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.cimafilip.shiftapp.BuildConfig;
 import com.example.cimafilip.shiftapp.R;
+import com.example.cimafilip.shiftapp.activities.LoginActivity2;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +51,12 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static int RESULT_IMAGE_CLICK = 1;
-    private String pictureFilePath;
+    private static int RESULT_PHOTO_REQUEST = 2;
+    private static int  WRITE_PERMISSION = 3;
+    private static int  CAMERA_PERMISSION = 4;
+    private Uri pictureFilePath;
+
+    ImageView profilePitureImageView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -85,12 +99,23 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        profilePitureImageView = rootView.findViewById(R.id.profilePictureImageView);
         Button takePictureButton = rootView.findViewById(R.id.takePictureButton);
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, RESULT_IMAGE_CLICK);
+                takePhoto();
+            }
+        });
+        Button signOutButton = rootView.findViewById(R.id.profileVypovedButton);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                preferences.edit().putString("idUser", "").apply();
+                Toast.makeText(getContext(), "Successfully logged out.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), LoginActivity2.class);
+                startActivity(intent);
             }
         });
         return rootView;
@@ -99,6 +124,17 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_PHOTO_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), pictureFilePath);
+                    profilePitureImageView.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -129,7 +165,53 @@ public class ProfileFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePhoto();
+            } else {
+                Toast.makeText(this.getContext(), "Camera not allowed!", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+        if (requestCode == WRITE_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePhoto();
+            } else {
+                Toast.makeText(this.getContext(), "Write to external storage not allowed'", Toast.LENGTH_LONG).show();
+            }
+
+        }
+    }
+
+
+
+    public void takePhoto() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION);
+            } else {
+                if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
+                }
+                else{
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    //TODO dopln si svuj nazev souboru
+                    File file = new File(Environment.getExternalStorageDirectory(),
+                            "nejaky_nazev" + new Date().getTime() + ".jpg");
+
+                    pictureFilePath = FileProvider.getUriForFile(this.getContext(), BuildConfig.APPLICATION_ID + ".provider", file);
+
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, pictureFilePath);
+                    startActivityForResult(cameraIntent, RESULT_PHOTO_REQUEST);
+                }
+            }
+        }
     }
 }
