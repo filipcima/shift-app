@@ -51,7 +51,6 @@ public class ProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static int RESULT_IMAGE_CLICK = 1;
     private static int RESULT_PHOTO_REQUEST = 2;
     private static int  WRITE_PERMISSION = 3;
     private static int  CAMERA_PERMISSION = 4;
