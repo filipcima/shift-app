@@ -43,6 +43,7 @@ public class RetrofitURLBuilder {
         return sb.toString();
     }
 
+    // TODO: rewrite "build" method to use graph structure instead of dict
     public String build() {
         StringBuilder sb = new StringBuilder();
         String brackets;

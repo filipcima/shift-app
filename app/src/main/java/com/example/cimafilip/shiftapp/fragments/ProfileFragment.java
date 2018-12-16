@@ -208,11 +208,10 @@ public class ProfileFragment extends Fragment {
                 if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
                 }
-                else{
+                else {
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    //TODO dopln si svuj nazev souboru
                     File file = new File(Environment.getExternalStorageDirectory(),
-                            "nejaky_nazev" + new Date().getTime() + ".jpg");
+                            "profile_photo_" + new Date().getTime() + ".jpg");
 
                     pictureFilePath = FileProvider.getUriForFile(this.getContext(), BuildConfig.APPLICATION_ID + ".provider", file);
 
