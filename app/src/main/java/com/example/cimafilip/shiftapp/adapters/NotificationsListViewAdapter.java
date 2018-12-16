@@ -57,15 +57,24 @@ public class NotificationsListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final View view = inflater.inflate(R.layout.notification_layout, null);
+        ViewHolder viewHolder;
+        final View view;
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.notification_layout, parent, false);
+            view = convertView;
+            viewHolder = new ViewHolder();
+            viewHolder.message = convertView.findViewById(R.id.notificationMessageTextView);
+            viewHolder.date = convertView.findViewById(R.id.notificationDateTextView);
+            viewHolder.from = convertView.findViewById(R.id.notificationFromTextView);
+            viewHolder.button = convertView.findViewById(R.id.resolveButton);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+            view = convertView;
+        }
         List<Notification> notificationList = mNotificationList.getNotifications();
         final Notification notification = notificationList.get(position);
-        ViewHolder viewHolder = new ViewHolder();
-
-        viewHolder.message = view.findViewById(R.id.notificationMessageTextView);
-        viewHolder.date = view.findViewById(R.id.notificationDateTextView);
-        viewHolder.from = view.findViewById(R.id.notificationFromTextView);
-        viewHolder.button = view.findViewById(R.id.resolveButton);
 
         StringBuilder msg = new StringBuilder();
         msg.append("Prosim, prijd: ");
@@ -151,7 +160,7 @@ public class NotificationsListViewAdapter extends BaseAdapter {
         
 
         
-        return view;
+        return convertView;
     }
 
     private static class ViewHolder {
