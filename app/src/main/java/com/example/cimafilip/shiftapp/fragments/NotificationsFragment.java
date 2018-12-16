@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.cimafilip.shiftapp.R;
-import com.example.cimafilip.shiftapp.adapters.MyPlanListViewAdapter;
 import com.example.cimafilip.shiftapp.adapters.NotificationsListViewAdapter;
 import com.example.cimafilip.shiftapp.api.APIClient;
 import com.example.cimafilip.shiftapp.api.IAPIEndpoints;

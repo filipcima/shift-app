@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.example.cimafilip.shiftapp.R;
 import com.example.cimafilip.shiftapp.activities.MainActivity;
 import com.example.cimafilip.shiftapp.activities.SetShiftsActivity;
-import com.example.cimafilip.shiftapp.adapters.MyPlanListViewAdapter;
 import com.example.cimafilip.shiftapp.adapters.NotificationsListViewAdapter;
 import com.example.cimafilip.shiftapp.api.APIClient;
 import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
