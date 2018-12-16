@@ -1,7 +1,5 @@
 package com.example.cimafilip.shiftapp.adapters;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -10,22 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cimafilip.shiftapp.R;
-import com.example.cimafilip.shiftapp.activities.MainActivity;
 import com.example.cimafilip.shiftapp.api.APIClient;
 import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
 import com.example.cimafilip.shiftapp.models.Notification;
-import com.example.cimafilip.shiftapp.models.NotificationHelper;
+import com.example.cimafilip.shiftapp.models.helpers.NotificationHelper;
 import com.example.cimafilip.shiftapp.models.NotificationList;
 import com.example.cimafilip.shiftapp.models.Shift;
-import com.example.cimafilip.shiftapp.models.ShiftHelper;
+import com.example.cimafilip.shiftapp.models.helpers.ShiftHelper;
 import com.example.cimafilip.shiftapp.models.User;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

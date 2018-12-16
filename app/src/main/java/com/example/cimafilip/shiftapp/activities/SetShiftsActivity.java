@@ -5,7 +5,7 @@ import com.example.cimafilip.shiftapp.api.APIClient;
 import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
 import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
 import com.example.cimafilip.shiftapp.models.Shift;
-import com.example.cimafilip.shiftapp.models.ShiftHelper;
+import com.example.cimafilip.shiftapp.models.helpers.ShiftHelper;
 import com.example.cimafilip.shiftapp.models.ShiftList;
 import com.example.cimafilip.shiftapp.models.User;
 

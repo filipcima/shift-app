@@ -71,6 +71,7 @@ public class ShiftsByDayViewAdapter extends BaseAdapter {
                 }
                 Intent intent = new Intent(inflater.getContext(), ChangeRequestActivity.class);
                 intent.putStringArrayListExtra("usersOnShift", usersOnShift);
+                intent.putExtra("idShift", s.get_id());
                 inflater.getContext().startActivity(intent);
             }
         });

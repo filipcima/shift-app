@@ -1,14 +1,16 @@
 package com.example.cimafilip.shiftapp.api;
 
 import com.example.cimafilip.shiftapp.models.*;
-
-import java.util.List;
+import com.example.cimafilip.shiftapp.models.helpers.NotificationHelper;
+import com.example.cimafilip.shiftapp.models.helpers.RequestHelper;
+import com.example.cimafilip.shiftapp.models.helpers.ShiftHelper;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -49,12 +51,18 @@ public interface IAPIEndpoints {
 
     @PATCH("shifts/{id}")
     Call<ShiftHelper> patchShift(@Path("id") String id,
-                           @Body ShiftHelper shift,
-                           @Header("If-Match") String etag);
+                                 @Body ShiftHelper shift,
+                                 @Header("If-Match") String etag);
 
     @PATCH("notifications/{id}")
     Call<NotificationHelper> patchNotification(@Path("id") String id,
                                                @Body NotificationHelper notification,
                                                @Header("If-Match") String etag);
+
+    @POST("requests")
+    Call<RequestHelper> postRequest(@Body RequestHelper request);
+
+    @POST("notifications")
+    Call<NotificationHelper> postNotification(@Body NotificationHelper notification);
 
 }

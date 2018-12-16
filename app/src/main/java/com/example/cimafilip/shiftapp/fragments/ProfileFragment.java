@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cimafilip.shiftapp.BuildConfig;
@@ -56,7 +57,7 @@ public class ProfileFragment extends Fragment {
     private static int  CAMERA_PERMISSION = 4;
     private Uri pictureFilePath;
 
-    ImageView profilePitureImageView;
+    ImageView profilePictureImageView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -99,7 +100,14 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        profilePitureImageView = rootView.findViewById(R.id.profilePictureImageView);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(rootView.getContext());
+
+
+        TextView name = rootView.findViewById(R.id.profileNameTextView);
+        name.setText(preferences.getString("nameUser", ""));;
+
+        profilePictureImageView = rootView.findViewById(R.id.profilePictureImageView);
+
         Button takePictureButton = rootView.findViewById(R.id.takePictureButton);
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +115,7 @@ public class ProfileFragment extends Fragment {
                 takePhoto();
             }
         });
+
         Button signOutButton = rootView.findViewById(R.id.profileVypovedButton);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +138,7 @@ public class ProfileFragment extends Fragment {
 
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), pictureFilePath);
-                    profilePitureImageView.setImageBitmap(bitmap);
+                    profilePictureImageView.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -189,7 +198,6 @@ public class ProfileFragment extends Fragment {
 
         }
     }
-
 
 
     public void takePhoto() {
