@@ -75,15 +75,24 @@ public class NotificationsListViewAdapter extends BaseAdapter {
         }
         List<Notification> notificationList = mNotificationList.getNotifications();
         final Notification notification = notificationList.get(position);
-
-        StringBuilder msg = new StringBuilder();
-        msg.append("Prosim, prijd: ");
-        msg.append(notification.getShift().getDateFrom().substring(0, 5));
-        msg.append(" ");
-        msg.append(notification.getShift().getDateFrom().split(" ")[1].substring(0, 5));
-        msg.append("-");
-        msg.append(notification.getShift().getDateTo().split(" ")[1].substring(0, 5));
-
+        StringBuilder msg;
+        if (notification.getNotificationType().equals("change_request")) {
+            msg = new StringBuilder();
+            msg.append("Prosim, prijd: ");
+            msg.append(notification.getShift().getDateFrom().substring(0, 5));
+            msg.append(" ");
+            msg.append(notification.getShift().getDateFrom().split(" ")[1].substring(0, 5));
+            msg.append("-");
+            msg.append(notification.getShift().getDateTo().split(" ")[1].substring(0, 5));
+        } else {
+            msg = new StringBuilder();
+            msg.append("Zrusil jsem ti: ");
+            msg.append(notification.getShift().getDateFrom().substring(0, 5));
+            msg.append(" ");
+            msg.append(notification.getShift().getDateFrom().split(" ")[1].substring(0, 5));
+            msg.append("-");
+            msg.append(notification.getShift().getDateTo().split(" ")[1].substring(0, 5));
+        }
         viewHolder.message.setText(msg.toString());
         viewHolder.date.setText(notification.getCreated());
         viewHolder.from.setText(notification.getFromUser().getFirstName());

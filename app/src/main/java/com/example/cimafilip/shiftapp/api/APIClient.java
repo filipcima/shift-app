@@ -7,7 +7,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
-    private static final String API_URL = "http://192.168.2.106:5000/"; // should be in config file
+    private static final String API_URL = "http://192.168.2.103:5000/"; // should be in config file
     private static Gson gson = new GsonBuilder()
             .setDateFormat("%d/%m/%y %H:%M:%S")
             .create();

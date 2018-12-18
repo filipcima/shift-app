@@ -19,6 +19,8 @@ import com.example.cimafilip.shiftapp.api.IAPIEndpoints;
 import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
 import com.example.cimafilip.shiftapp.models.Shift;
 import com.example.cimafilip.shiftapp.models.ShiftList;
+import com.example.cimafilip.shiftapp.models.SuperiorPlan;
+import com.example.cimafilip.shiftapp.models.SuperiorPlanList;
 
 import java.util.List;
 
@@ -87,41 +89,69 @@ public class MyPlanFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_my_plan, container, false);
         mListView = rootView.findViewById(R.id.listViewMyPlan);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String idUser = prefs.getString("idUser", "");
-
-        String where = "{\"workers\":{\"$in\": [\"" + idUser + "\"]}}";
-
-        String order = new RetrofitURLBuilder("sort")
-                .add("date_from", "1")
-                .build();
-
+        String query = "{\"$and\": [{\"owner\": \"5c0820e3766cf241597b3324\"},{\"status\": \"active\"}]}";
         String embedded = new RetrofitURLBuilder("embedded")
-                .add("workers", "1")
+                .add("owner", "1")
+                .add("owner.inferiors", "1")
                 .build();
 
-        IAPIEndpoints apiClient = APIClient.getApiService();
-        Call<ShiftList> call = apiClient.getShiftsByPlan(where, order, embedded);
-        call.enqueue(new Callback<ShiftList>() {
+        final IAPIEndpoints apiClient = APIClient.getApiService();
+        Call<SuperiorPlanList> call = apiClient.getSuperiorPlans(query, "1", "-created", embedded);
+        call.enqueue(new Callback<SuperiorPlanList>() {
             @Override
-            public void onResponse(Call<ShiftList> call, Response<ShiftList> response) {
-                Log.d("myplanFragment", call.request().url().toString());
+            public void onResponse(Call<SuperiorPlanList> call, Response<SuperiorPlanList> response) {
+                Log.d("call1", call.request().url().toString());
 
-                if (response.body() != null) {
-                    List<Shift> sl = response.body().getShifts();
-                    ListView mListView = rootView.findViewById(R.id.listViewMyPlan);
-                    if (mListView != null) {
-                        mListView.setAdapter(new ShiftsByDayViewAdapter(getLayoutInflater(), sl));
-                    }
+                if (response.body() == null) {
+                    return;
                 }
+                List<SuperiorPlan> plans = response.body().getSuperiorPlans();
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                String idUser = prefs.getString("idUser", "");
+                if (plans.size() == 0) {
+                    return;
+                }
+                String idSuperiorPlan = plans.get(0).get_id();
+                String where = "{\"$and\":[{\"workers\":{\"$in\":[\"" + idUser + "\"]}},{\"superior_plan\":\""+ idSuperiorPlan +"\"}]}";
+                String order = new RetrofitURLBuilder("sort")
+                        .add("date_from", "1")
+                        .build();
+                String embedded = new RetrofitURLBuilder("embedded")
+                        .add("workers", "1")
+                        .build();
+
+                Call<ShiftList> call2 = apiClient.getShiftsByPlan(where, order, embedded);
+                call2.enqueue(new Callback<ShiftList>() {
+                    @Override
+                    public void onResponse(Call<ShiftList> call, Response<ShiftList> response) {
+                        Log.d("myplanFragment", call.request().url().toString());
+
+                        if (response.body() != null) {
+                            List<Shift> sl = response.body().getShifts();
+                            ListView mListView = rootView.findViewById(R.id.listViewMyPlan);
+                            if (mListView != null) {
+                                mListView.setAdapter(new ShiftsByDayViewAdapter(getLayoutInflater(), sl));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ShiftList> call, Throwable t) {
+                        Log.d("fail2", call.request().url().toString());
+                        Log.d("msg", t.getLocalizedMessage());
+                    }
+                });
+
             }
 
             @Override
-            public void onFailure(Call<ShiftList> call, Throwable t) {
-                Log.d("fail", call.request().url().toString());
+            public void onFailure(Call<SuperiorPlanList> call, Throwable t) {
+                Log.d("fail1", call.request().url().toString());
                 Log.d("msg", t.getLocalizedMessage());
             }
         });
+
 
         return rootView;
     }

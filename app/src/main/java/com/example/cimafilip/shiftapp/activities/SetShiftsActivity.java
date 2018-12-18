@@ -65,6 +65,7 @@ public class SetShiftsActivity extends AppCompatActivity {
 
                     Shift shift = shifts.get(i);
 
+                    List<String> workerIds;
                     List<User> workers = shift.getWorkers();
 
                     for (int j = 0; j < workers.size(); j++) {
@@ -84,11 +85,10 @@ public class SetShiftsActivity extends AppCompatActivity {
                     }
 
 
-                    List<String> workerIds = new ArrayList<>();
-                    for(User worker : shift.getWorkers()) {
+                    workerIds = new ArrayList<>();
+                    for (User worker : shift.getWorkers()) {
                         workerIds.add(worker.get_id());
                     }
-
                     ShiftHelper shiftHelper = new ShiftHelper();
                     shiftHelper.setWorkers((ArrayList<String>) workerIds);
                     IAPIEndpoints apiService = APIClient.getApiService();

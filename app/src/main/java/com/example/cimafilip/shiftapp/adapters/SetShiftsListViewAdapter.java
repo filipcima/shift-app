@@ -68,10 +68,12 @@ public class SetShiftsListViewAdapter extends BaseAdapter {
         viewHolder.shiftDetailTextView = view.findViewById(R.id.shiftDetailTextView);
         viewHolder.canGoSwitch = view.findViewById(R.id.canGoSwitch);
 
-        for (User worker: shift.getWorkers()) {
-            if (prefs.getString("idUser", "").equals(worker.get_id())) {
-                viewHolder.canGoSwitch.setChecked(true);
-                break;
+        if (shift.getWorkers() != null) {
+            for (User worker : shift.getWorkers()) {
+                if (prefs.getString("idUser", "").equals(worker.get_id())) {
+                    viewHolder.canGoSwitch.setChecked(true);
+                    break;
+                }
             }
         }
 

@@ -31,6 +31,9 @@ public class Notification implements Serializable {
     @SerializedName("_created")
     private String created;
 
+    @SerializedName("notification_type")
+    private String notificationType;
+
     public String get_id() {
         return _id;
     }
@@ -93,5 +96,13 @@ public class Notification implements Serializable {
 
     public void setFromUser(User fromUser) {
         this.fromUser = fromUser;
+    }
+
+    public String getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(String notificationType) {
+        this.notificationType = notificationType;
     }
 }

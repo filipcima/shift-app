@@ -2,8 +2,10 @@ package com.example.cimafilip.shiftapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,8 @@ import com.example.cimafilip.shiftapp.helpers.RetrofitURLBuilder;
 import com.example.cimafilip.shiftapp.models.NotificationList;
 import com.example.cimafilip.shiftapp.models.Shift;
 import com.example.cimafilip.shiftapp.models.ShiftList;
+import com.example.cimafilip.shiftapp.models.SuperiorPlan;
+import com.example.cimafilip.shiftapp.models.SuperiorPlanList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +59,34 @@ public class ProductionPlanFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public ProductionPlanFragment() {
-        getData("5c08246f766cf241597b3326");
+        String query = new RetrofitURLBuilder("query")
+                .add("status", "active")
+                .build();
+        String embedded = new RetrofitURLBuilder("embedded")
+                .add("owner", "1")
+                .add("owner.inferiors", "1")
+                .build();
+
+
+        IAPIEndpoints apiService = APIClient.getApiService();
+        Call<SuperiorPlanList> call = apiService.getSuperiorPlans(query, "1", "-created", embedded);
+        call.enqueue(new Callback<SuperiorPlanList>() {
+            @Override
+            public void onResponse(Call<SuperiorPlanList> call, Response<SuperiorPlanList> response) {
+                Log.d("active production plan", call.request().url().toString());
+                if (response.body().getSuperiorPlans() != null && response.body().getSuperiorPlans().size() > 0) {
+                    SuperiorPlan plan = response.body().getSuperiorPlans().get(0);
+                    getData(plan.get_id());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<SuperiorPlanList> call, Throwable t) {
+                Log.d("fail", call.request().url().toString());
+                Log.d("msg", t.getLocalizedMessage());
+            }
+        });
     }
 
     /**
@@ -131,14 +162,11 @@ public class ProductionPlanFragment extends Fragment {
                         String datetime = shift.getDateFrom();
                         String date2 = datetime.split(" ")[0];
                         String[] dateArray = date2.split("/");
-                        Log.d("shift", dateArray[2]);
-                        Log.d("shift", dateArray[1]);
-                        Log.d("shift", dateArray[0]);
+
                         mCalendarView.markDate(
                                 Integer.parseInt("20" + dateArray[2]),
                                 Integer.parseInt(dateArray[1]),
                                 Integer.parseInt(dateArray[0]));
-
                     }
 
                 }

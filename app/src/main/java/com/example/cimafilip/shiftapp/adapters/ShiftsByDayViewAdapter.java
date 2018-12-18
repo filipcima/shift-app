@@ -90,32 +90,36 @@ public class ShiftsByDayViewAdapter extends BaseAdapter {
         String endTime = s.getDateTo().split(" ")[1].substring(0, 5);
         StringBuilder workers = new StringBuilder();
 
-        int i = 0;
-        for (User worker: s.getWorkers()) {
-            String fullName = worker.getFirstName() + " " + worker.getSecondName();
-            workers.append(fullName);
-            if (!(i++ == s.getWorkers().size() - 1)) {
-                workers.append(", ");
-            }
-            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-            Date dateShift = new Date();
-            Date dateNow = new Date();
+        viewHolder.placeName.setText("");
 
-            try {
-                dateShift = df.parse(s.getDateFrom());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        if (s.getWorkers() != null) {
+            int i = 0;
+            for (User worker: s.getWorkers()) {
+                String fullName = worker.getFirstName() + " " + worker.getSecondName();
+                workers.append(fullName);
+                if (!(i++ == s.getWorkers().size() - 1)) {
+                    workers.append(", ");
+                }
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+                Date dateShift = new Date();
+                Date dateNow = new Date();
 
-            if (worker.get_id().equals(idUser) && dateNow.before(dateShift)) {
-                view.findViewById(R.id.button).setVisibility(View.VISIBLE);
+                try {
+                    dateShift = df.parse(s.getDateFrom());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (worker.get_id().equals(idUser) && dateNow.before(dateShift)) {
+                    view.findViewById(R.id.button).setVisibility(View.VISIBLE);
+                }
             }
+            viewHolder.placeName.setText(workers.toString());
 
         }
 
         viewHolder.dayOfWeek.setText("PO");
         viewHolder.date.setText(day + "." + month + ".");
-        viewHolder.placeName.setText(workers.toString());
         viewHolder.workingTime.setText(startTime + "-" + endTime);
         return view;
     }

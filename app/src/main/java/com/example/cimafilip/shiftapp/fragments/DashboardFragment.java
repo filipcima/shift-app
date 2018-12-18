@@ -138,7 +138,7 @@ public class DashboardFragment extends Fragment {
                  .add("1")
                  .build();
          String order = new RetrofitURLBuilder("sort")
-                 .add("_created", "-1")
+                 .add("created", "-1")
                  .build();
 
         IAPIEndpoints apiService = APIClient.getApiService();
