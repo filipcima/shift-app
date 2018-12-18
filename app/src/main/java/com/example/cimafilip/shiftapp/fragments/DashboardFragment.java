@@ -66,7 +66,36 @@ public class DashboardFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public DashboardFragment() {
-        // Required empty public constructor
+        String query = new RetrofitURLBuilder("query")
+                .add("status", "active")
+                .build();
+        String embedded = new RetrofitURLBuilder("embedded")
+                .add("owner", "1")
+                .add("owner.inferiors", "1")
+                .build();
+
+        IAPIEndpoints apiService = APIClient.getApiService();
+        Call<SuperiorPlanList> call = apiService.getSuperiorPlans(query, "1", "-created", embedded);
+        call.enqueue(new Callback<SuperiorPlanList>() {
+            @Override
+            public void onResponse(Call<SuperiorPlanList> call, Response<SuperiorPlanList> response) {
+                Log.d("active production plan", call.request().url().toString());
+                if (response.body().getSuperiorPlans() != null && response.body().getSuperiorPlans().size() > 0) {
+                    SuperiorPlan plan = response.body().getSuperiorPlans().get(0);
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    prefs.edit().putString("idActivePlan", plan.get_id()).apply();
+                    getNextShift(plan.get_id());
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<SuperiorPlanList> call, Throwable t) {
+                Log.d("fail", call.request().url().toString());
+                Log.d("msg", t.getLocalizedMessage());
+            }
+        });
     }
 
     /**
@@ -121,7 +150,6 @@ public class DashboardFragment extends Fragment {
         });
 
         idUser = prefs.getString("idUser", "");
-        getNextShift();
         getPendingSuperiorPlan();
 
         return rootView;
@@ -175,10 +203,10 @@ public class DashboardFragment extends Fragment {
 
     }
 
-    private void getNextShift() {
+    private void getNextShift(String idPlan) {
         String now = new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        String query = "{\"$and\":[{\"workers\":{\"$in\":[\"" + idUser + "\"]}},{\"date_from\":{\"$gt\":\""+ now +"\"}}]}";
+        String query = "{\"$and\":[{\"workers\":{\"$in\":[\"" + idUser + "\"]}},{\"date_from\":{\"$gt\":\""+ now +"\"}},{\"superior_plan\":\""+ idPlan +"\"}]}";
 
         String order = new RetrofitURLBuilder("sort")
                 .add("date_from", "1")

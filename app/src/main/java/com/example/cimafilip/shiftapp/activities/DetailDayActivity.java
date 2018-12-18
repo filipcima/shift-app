@@ -1,8 +1,10 @@
 package com.example.cimafilip.shiftapp.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,8 +44,10 @@ public class DetailDayActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String idPlan = prefs.getString("idActivePlan", "");
         String date = String.valueOf(day) + '/' + month + '/' + String.valueOf(year).substring(2,4);
-        String where ="{\"$and\": [{\"date_from\": {\"$gte\": \"" + date + " 00:00:00\"}}, {\"date_from\": {\"$lte\": \"" + date + " 23:59:59\"}}]}";
+        String where ="{\"$and\": [{\"date_from\": {\"$gte\": \"" + date + " 00:00:00\"}}, {\"date_from\": {\"$lte\": \"" + date + " 23:59:59\"}}, {\"superior_plan\":\"" + idPlan + "\"}]}";
         String embedded = new RetrofitURLBuilder("embedded")
                 .add("workers", "1")
                 .build();

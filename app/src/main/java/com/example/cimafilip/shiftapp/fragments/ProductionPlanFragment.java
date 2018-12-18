@@ -59,34 +59,7 @@ public class ProductionPlanFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public ProductionPlanFragment() {
-        String query = new RetrofitURLBuilder("query")
-                .add("status", "active")
-                .build();
-        String embedded = new RetrofitURLBuilder("embedded")
-                .add("owner", "1")
-                .add("owner.inferiors", "1")
-                .build();
 
-
-        IAPIEndpoints apiService = APIClient.getApiService();
-        Call<SuperiorPlanList> call = apiService.getSuperiorPlans(query, "1", "-created", embedded);
-        call.enqueue(new Callback<SuperiorPlanList>() {
-            @Override
-            public void onResponse(Call<SuperiorPlanList> call, Response<SuperiorPlanList> response) {
-                Log.d("active production plan", call.request().url().toString());
-                if (response.body().getSuperiorPlans() != null && response.body().getSuperiorPlans().size() > 0) {
-                    SuperiorPlan plan = response.body().getSuperiorPlans().get(0);
-                    getData(plan.get_id());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<SuperiorPlanList> call, Throwable t) {
-                Log.d("fail", call.request().url().toString());
-                Log.d("msg", t.getLocalizedMessage());
-            }
-        });
     }
 
     /**
@@ -122,6 +95,10 @@ public class ProductionPlanFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_production_plan, container, false);
         mCalendarView = (MCalendarView) rootView.findViewById(R.id.calendar);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String idPlan = prefs.getString("idActivePlan", "");
+        getData(idPlan);
+
         mCalendarView.setOnDateClickListener(new OnDateClickListener() {
             @Override
             public void onDateClick(View view, DateData date) {
@@ -146,8 +123,6 @@ public class ProductionPlanFragment extends Fragment {
         String embedded = new RetrofitURLBuilder("embedded")
                 .add("workers", "1")
                 .build();
-
-        Log.d("embed", embedded);
 
         IAPIEndpoints apiService = APIClient.getApiService();
         Call<ShiftList> call = apiService.getShifts(query, embedded);
